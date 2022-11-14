@@ -1,18 +1,12 @@
-from django.contrib.auth import authenticate, login,logout
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import permissions
 from djangorestapp.models import Product, Todo
-from djangorestapp.serializers import ProductSerializer, TodoSerializer, UserLoginSerializer, UserLogoutSerializer, UserSerializer
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.authtoken.models import Token
+from djangorestapp.serializers import ProductSerializer, TodoSerializer, UserLoginSerializer
 from rest_framework import generics
-from rest_framework.permissions import AllowAny
 from django.contrib.auth.models import User
 from djangorestapp.serializers import RegisterSerializer
-
 
 
 class TodoListApiView(APIView):
@@ -24,7 +18,7 @@ class TodoListApiView(APIView):
         '''
         List all the todo items for given requested user
         '''
-        todos = Todo.objects.filter(user = request.user.id)
+        todos = Todo.objects.filter(user=request.user.id)
         serializer = TodoSerializer(todos, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -34,8 +28,8 @@ class TodoListApiView(APIView):
         Create the Todo with given todo data
         '''
         data = {
-            'task': request.data.get('task'), 
-            'completed': request.data.get('completed'), 
+            'task': request.data.get('task'),
+            'completed': request.data.get('completed'),
             'user': request.user.id
         }
         serializer = TodoSerializer(data=data)
@@ -44,6 +38,7 @@ class TodoListApiView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class TodoDetailApiView(APIView):
     # add permission to check if user is authenticated
@@ -54,7 +49,7 @@ class TodoDetailApiView(APIView):
         Helper method to get the object with given todo_id, and user_id
         '''
         try:
-            return Todo.objects.get(id=todo_id, user = user_id)
+            return Todo.objects.get(id=todo_id, user=user_id)
         except Todo.DoesNotExist:
             return None
 
@@ -81,15 +76,16 @@ class TodoDetailApiView(APIView):
         todo_instance = self.get_object(todo_id, request.user.id)
         if not todo_instance:
             return Response(
-                {"res": "Object with todo id does not exists"}, 
+                {"res": "Object with todo id does not exists"},
                 status=status.HTTP_400_BAD_REQUEST
             )
         data = {
-            'task': request.data.get('task'), 
-            'completed': request.data.get('completed'), 
+            'task': request.data.get('task'),
+            'completed': request.data.get('completed'),
             'user': request.user.id
         }
-        serializer = TodoSerializer(instance = todo_instance, data=data, partial = True)
+        serializer = TodoSerializer(
+            instance=todo_instance, data=data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -103,7 +99,7 @@ class TodoDetailApiView(APIView):
         todo_instance = self.get_object(todo_id, request.user.id)
         if not todo_instance:
             return Response(
-                {"res": "Object with todo id does not exists"}, 
+                {"res": "Object with todo id does not exists"},
                 status=status.HTTP_400_BAD_REQUEST
             )
         todo_instance.delete()
@@ -113,9 +109,7 @@ class TodoDetailApiView(APIView):
         )
 
 
-
 class ProductListApiView(APIView):
-
 
     # 1. List all
     def get(self, request, *args, **kwargs):
@@ -132,8 +126,8 @@ class ProductListApiView(APIView):
         Create the Todo with given todo data
         '''
         data = {
-            'task': request.data.get('task'), 
-            'completed': request.data.get('completed'), 
+            'task': request.data.get('task'),
+            'completed': request.data.get('completed'),
             'user': request.user.id
         }
         serializer = ProductSerializer(data=data)
@@ -142,6 +136,7 @@ class ProductListApiView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class SnippetList(generics.ListCreateAPIView):
     queryset = Todo.objects.all()
@@ -153,7 +148,6 @@ class SnippetDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = TodoSerializer
 
 
-
 class Register(generics.ListCreateAPIView):
 
     queryset = User.objects.all()
@@ -161,8 +155,9 @@ class Register(generics.ListCreateAPIView):
 
 
 class UserDetail(generics.RetrieveUpdateDestroyAPIView):
-     queryset = User.objects.all()
-     serializer_class = RegisterSerializer
+    queryset = User.objects.all()
+    serializer_class = RegisterSerializer
+
 
 class Login(generics.GenericAPIView):
     # get method handler
@@ -175,15 +170,3 @@ class Login(generics.GenericAPIView):
             user = serializer_class.validated_data['user']
             return Response(serializer_class.data)
         return Response(serializer_class.errors)
-
-class Logout(generics.GenericAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserLogoutSerializer
-
-    def post(self, request, *args, **kwargs):
-        serializer_class = UserLogoutSerializer(data=request.data)
-        if serializer_class.is_valid(raise_exception=True):
-            return Response(serializer_class.data)
-        return Response(serializer_class.errors)
-
-
