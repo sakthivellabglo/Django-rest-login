@@ -170,3 +170,4 @@ class Login(generics.GenericAPIView):
             user = serializer_class.validated_data['user']
             return Response(serializer_class.data)
         return Response(serializer_class.errors)
+                  
