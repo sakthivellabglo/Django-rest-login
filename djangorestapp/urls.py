@@ -17,6 +17,7 @@ router.register('grouplist', Grouplist)
 router.register('userlist', Userlist)
 router.register('Doclist', Doclist)
 router.register('Patientlist', Patientlist)
+router.register('Patientlist', Patientlist)
 urlpatterns = [
     path('api', TodoListApiView.as_view()),
     path('product', ProductListApiView.as_view()),
@@ -27,7 +28,7 @@ urlpatterns = [
     path('register/', Register.as_view(), name='auth_register'),
      path('login/', Login.as_view(), name="login"),
     path('snippets/', SnippetsList.as_view()),
-    path('snippets/<int:pk>/', SnippetsDetail.as_view()),
+    path('snippets/<int:pk>/', SnippetsDetail.as_view(), name='product_id'),
     
     
 ]+router.urls

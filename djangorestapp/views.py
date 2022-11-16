@@ -2,11 +2,10 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import permissions
-from djangorestapp.models import Doctor, Patient, Product, Snippet, Todo
+from djangorestapp.models import *
 from djangorestapp.serializers import *
 from rest_framework import generics, viewsets
 from django.contrib.auth.models import User, Group
-from djangorestapp.serializers import RegisterSerializer
 from rest_framework.decorators import action
 from rest_framework import renderers
 from rest_framework .pagination import PageNumberPagination
@@ -102,13 +101,12 @@ class SnippetList(generics.ListCreateAPIView):
     serializer_class = TodoSerializer
 
 
-class SnippetDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Todo.objects.all()
-    serializer_class = TodoSerializer
+class SnippetDetail(generics.ListCreateAPIView):
+    queryset = Snippet.objects.all()
+    serializer_class = SnippetSerializer
 
 
 class Register(generics.ListCreateAPIView):
-
     queryset = User.objects.all()
     serializer_class = RegisterSerializer
 
