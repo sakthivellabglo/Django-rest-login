@@ -17,8 +17,10 @@ from django.contrib import admin
 from django.urls import path,include
 from djangorestapp import urls as todo_urls
 
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls')),
-     path('todos/', include(todo_urls)),
+     path('todos/', include(todo_urls), name="myapp"),
+
 ]

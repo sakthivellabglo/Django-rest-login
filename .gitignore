@@ -3,3 +3,4 @@
 project-env
 images
 __pycache__
+db.sqlite3
