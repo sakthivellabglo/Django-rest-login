@@ -1,8 +1,9 @@
+from .models import  Doctor, Patient
 from rest_framework import serializers
-from .models import Product, Todo
+from .models import Product, Snippet, Todo
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from rest_framework.validators import UniqueValidator
 from django.contrib.auth.password_validation import validate_password
 
@@ -48,38 +49,6 @@ class RegisterSerializer(serializers.ModelSerializer):
         return user
 
 
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ['id', 'first_name', 'last_name',
-                  'email', 'is_seller', 'date_joined']
-        extra_kwargs = {
-            'password': {'write_only': True}
-        }
-
-
-# class UserLogoutSerializer(serializers.ModelSerializer):
-#     token = serializers.CharField()
-#     status = serializers.CharField(required=False, read_only=True)
-
-#     def validate(self, data):
-#         token = data.get("token", None)
-#         print(token)
-#         user = None
-#         user = User.objects.get(auth_token=token)
-#         user.ifLogged = False
-#         user.token = ""
-#         user.save()
-#         data['status'] = "User is logged out."
-#         return data
-
-#     class Meta:
-#         model = User
-#         fields = (
-#             'token',
-#             'status',
-#         )
-
 class UserLoginSerializer(serializers.ModelSerializer):
 
     username = serializers.CharField(
@@ -119,8 +88,45 @@ class UserLoginSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 "Please enter username or email to login.")
 
-        #user = User.objects.get(username=username)
         user = authenticate(username=username, password=password)
         token, created = Token.objects.get_or_create(user=user)
         data['token'] = token
         return data
+
+
+class TodosSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Todo
+        fields = ['url', 'id', 'task', 'user', 'completed']
+
+
+class SnippetSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Snippet
+        fields = [ 'created', 'title', 'code', 'linenos', 'product']
+
+
+class UserSerializer(serializers.HyperlinkedModelSerializer):
+
+    class Meta:
+        model = User
+        fields = ('url', 'username', 'email', 'groups')
+
+
+class GroupSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Group
+        fields = ('url','name')
+
+
+class DoctorSerealiser(serializers.HyperlinkedModelSerializer):
+
+    class Meta:
+        model = Doctor
+        fields = ('id', 'name')
+
+
+class AnimalSerialiser(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Patient
+        fields = ('url', 'id', 'name', 'gender', 'doctor')
