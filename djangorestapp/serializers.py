@@ -6,12 +6,13 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.models import User, Group
 from rest_framework.validators import UniqueValidator
 from django.contrib.auth.password_validation import validate_password
+from rest_framework.relations import HyperlinkedIdentityField
 
 
 class TodoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Todo
-        fields = ["task", "completed", "timestamp", "updated", "user"]
+        fields = ["task", "completed", "url", "timestamp", "updated", "user"]
 
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -94,16 +95,13 @@ class UserLoginSerializer(serializers.ModelSerializer):
         return data
 
 
-class TodosSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = Todo
-        fields = ['url', 'id', 'task', 'user', 'completed']
-
 
 class SnippetSerializer(serializers.ModelSerializer):
+    url = HyperlinkedIdentityField(view_name= 'product_id')
+
     class Meta:
         model = Snippet
-        fields = [ 'created', 'title', 'code', 'linenos', 'product']
+        fields = [ 'created', 'title',  'url', 'code', 'linenos', 'product']
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
@@ -123,7 +121,7 @@ class DoctorSerealiser(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Doctor
-        fields = ('id', 'name')
+        fields = ('id', 'name','url')
 
 
 class AnimalSerialiser(serializers.HyperlinkedModelSerializer):
