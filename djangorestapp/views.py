@@ -16,6 +16,7 @@ class TodoListApiView(APIView):
 
     def get(self, request, *args, **kwargs):
         todos = Todo.objects.filter(user=request.user.id)
+        
         serializer = TodoSerializer(todos, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -133,20 +134,22 @@ class TodosDetail(generics.GenericAPIView):
 
     def post(self, request, *args, **kwargs):
         serializer_class = UserSerializer(data=request.data)
+        print("summa oru sample",request.stream)
         if serializer_class.is_valid(raise_exception=True):
             return Response(serializer_class.data)
         return Response(serializer_class.errors)
-
-
-class SnippetsList(generics.ListCreateAPIView):
-    queryset = Snippet.objects.all()
-    serializer_class = SnippetSerializer
 
 
 class LargeResultsSetPagination(PageNumberPagination):
     page_size = 2
     page_size_query_param = 'page_size'
     max_page_size = 4
+
+
+class SnippetsList(generics.ListCreateAPIView):
+    queryset = Snippet.objects.all()
+    serializer_class = SnippetSerializer
+    
 
 
 class SnippetsDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -162,6 +165,7 @@ class SnippetsDetail(generics.RetrieveUpdateDestroyAPIView):
 class Grouplist(viewsets.ModelViewSet):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
+    pagination_class = LargeResultsSetPagination
 
 
 class Userlist(viewsets.ModelViewSet):
@@ -173,8 +177,10 @@ class Userlist(viewsets.ModelViewSet):
 class Doclist(viewsets.ModelViewSet):
     queryset = Doctor.objects.all()
     serializer_class = DoctorSerealiser
+    pagination_class = LargeResultsSetPagination
 
 
 class Patientlist(viewsets.ModelViewSet):
     queryset = Patient.objects.all()
-    serializer_class = AnimalSerialiser
+    serializer_class = PatientSerialiser
+    pagination_class = LargeResultsSetPagination

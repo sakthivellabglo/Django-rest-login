@@ -12,7 +12,7 @@ from rest_framework.relations import HyperlinkedIdentityField
 class TodoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Todo
-        fields = ["task", "completed", "url", "timestamp", "updated", "user"]
+        fields = ["task", "completed", "timestamp", "updated", "user"]
 
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -97,18 +97,15 @@ class UserLoginSerializer(serializers.ModelSerializer):
 
 
 class SnippetSerializer(serializers.ModelSerializer):
-    url = HyperlinkedIdentityField(view_name= 'product_id')
-
     class Meta:
         model = Snippet
-        fields = [ 'created', 'title',  'url', 'code', 'linenos', 'product']
+        fields = [ 'created', 'title', 'code', 'linenos', 'product']
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
-
     class Meta:
         model = User
-        fields = ('url', 'username', 'email', 'groups')
+        fields = ( 'username', 'email')
 
 
 class GroupSerializer(serializers.HyperlinkedModelSerializer):
@@ -121,10 +118,10 @@ class DoctorSerealiser(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Doctor
-        fields = ('id', 'name','url')
+        fields = ( 'name','url')
 
 
-class AnimalSerialiser(serializers.HyperlinkedModelSerializer):
+class PatientSerialiser(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Patient
-        fields = ('url', 'id', 'name', 'gender', 'doctor')
+        fields = ('url',  'name', 'gender', 'doctor')
